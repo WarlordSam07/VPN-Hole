@@ -9,7 +9,7 @@ A self-contained GoLang library that is capable of blocking ads,malwares and tra
 
 ## License
 
-## Installing
+## Integration
 
 ### Adapt to Bitmask_core
 
