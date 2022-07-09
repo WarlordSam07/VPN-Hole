@@ -19,8 +19,8 @@ func main() {
 		subscriptionsFilename string
 	)
 
-	flag.StringVar(&addr, "addr", ":5353", "addr")
-	flag.StringVar(&upstream, "upstream", "1.1.1.1:5353", "upstream")
+	flag.StringVar(&addr, "addr", ":53", "addr")
+	flag.StringVar(&upstream, "upstream", "1.1.1.1:53", "upstream")
 	flag.StringVar(&subscriptionsFilename, "subs", "subs.list", "subscriptions filename")
 	flag.Parse()
 
