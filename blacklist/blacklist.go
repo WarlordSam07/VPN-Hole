@@ -3,6 +3,7 @@ package main
 import (
 	"strings"
 
+	"0xacab.org/leap/vpn-hole/-/tree/develop-blocker/blacklist"
 	"github.com/miekg/dns"
 )
 
@@ -20,6 +21,7 @@ func isBlacklisted(req *dns.Msg) bool {
 	q := req.Question[0]
 
 	switch q.Qtype {
+	case dns.TypeA:
 	case dns.TypeAAAA:
 	default:
 		return false
