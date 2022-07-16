@@ -2,6 +2,7 @@ package main
 
 import (
 	"strings"
+	"main/blacklist"
 	"github.com/miekg/dns"
 )
 
