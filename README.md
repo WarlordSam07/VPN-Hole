@@ -68,7 +68,8 @@ go mod tidy
 ```
 If go.mod and go.sum are missing from the cloned repository, then:
 ```
-go mod init [module-path]
+# go mod init [module-path]
+go mod init main
 ``` 
 
 ## Build & Run <a name="Build & Run"></a>
@@ -78,11 +79,28 @@ go mod init [module-path]
 go build
 ```
 An executable binary file would be generated for the library.
+In Windows, a executable named- main.exe would be created. 
 ```
 # executing the binary
+main.exe
+```
+This would start the network wide DNS-level blocker on port 53.
+
+## Test the blocker <a name="Test"></a>
+To check if the blocker is blocking malicious domains from the provided blacklist, run **nslookup** command and see the response:
 
 ```
+# For example: 'adbuddiz.com' is one of the domain in the blacklist
+nslookup -port=53 adbuddiz.com localhost
 
+Server:  UnKnown
+Address:  ::1
+
+Non-authoritative answer:
+Name:    adbuddiz.com
+Addresses:  ::
+          0.0.0.0
+```
 
 ## Integration <a name="Integration"></a>
 To integrate the VPN-Hole Library with existing cross-platform applications, we will be using gomobile to compile and bind it.
