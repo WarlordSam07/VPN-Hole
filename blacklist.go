@@ -2,8 +2,6 @@ package main
 
 import (
 	"strings"
-
-	"0xacab.org/leap/vpn-hole/-/tree/develop-blocker/blacklist"
 	"github.com/miekg/dns"
 )
 
