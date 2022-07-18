@@ -114,3 +114,4 @@ To integrate the VPN-Hole Library with existing cross-platform applications, we 
 ```
 
 ## License <a name="License"></a>
+This project is released under GNU GPLv3 License.[See LICENSE file](https://0xacab.org/leap/vpn-hole/-/blob/no-masters/LICENSE) for details.
