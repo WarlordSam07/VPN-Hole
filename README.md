@@ -79,7 +79,17 @@ go mod init main
 go build
 ```
 An executable binary file would be generated for the library.
-In Windows, a executable named- main.exe would be created. 
+
+On **MacOSX Monterey** you may encounter an build error like this
+```
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/pthread.h:328:6: error: macro expansion producing 
+'defined' has undefined behavior [-Werror,-Wexpansion-to-defined]
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/pthread.h:197:2: note: expanded from macro 
+'_PTHREAD_SWIFT_IMPORTER_NULLABILITY_COMPAT'
+```
+You can fix it by adapting the compiler flags, e.g. by prefixing `go build` with `CGO_CPPFLAGS="-Wno-error -Wno-nullability-completeness -Wno-expansion-to-defined -Wbuiltin-requires-header"`.
+
+In **Windows**, an executable named- main.exe would be created. 
 ```
 # executing the binary
 main.exe
@@ -91,6 +101,7 @@ To check if the blocker is blocking malicious domains from the provided blacklis
 
 ```
 # For example: 'adbuddiz.com' is one of the domain in the blacklist
+
 nslookup -port=53 adbuddiz.com localhost
 
 Server:  UnKnown
