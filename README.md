@@ -89,6 +89,24 @@ On **MacOSX Monterey** you may encounter an build error like this
 ```
 You can fix it by adapting the compiler flags, e.g. by prefixing `go build` with `CGO_CPPFLAGS="-Wno-error -Wno-nullability-completeness -Wno-expansion-to-defined -Wbuiltin-requires-header"`.
 
+On **Ubuntu** if you face an error saying:"Failed to serve DNS server: listen udp :53: bind: permission denied"
+```
+# see the services listening on port 53
+sudo ss -lp "sport = :domain"
+or 
+sudo lsof -i :53
+```
+You can see that Ubuntu has *systemd-resolved* listening on port 53 by default. This will prevent us from running our own DNS server
+To disable it temporarily and run our own server
+```
+# stop
+sudo systemctl stop systemd-resolved
+# disable
+sudo systemctl disable systemd-resolved
+```
+To disable it permanently, uncomment and change `DNSStubListener` to *no* in `/etc/systemd/resolved.conf`; you can revert back everything to default if you stop using the vpn-hole library as a standalone.
+Also stop any other service which prevents from listening on port 53. Then, you can simply execute the binary file.
+
 In **Windows**, an executable named- main.exe would be created. 
 ```
 # executing the binary
