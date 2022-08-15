@@ -1,4 +1,3 @@
-WIP
 
 # **VPN-Hole** 
 
