@@ -5,41 +5,41 @@ import (
 	"log"
 	"net"
 
+	"0xacab.org/leap/vpn-hole/alter/alter"
 	"github.com/miekg/dns"
 )
 
 var (
-	client   dns.Client
-	upstream string
+	client dns.Client
 
 	blockIPv4 = net.ParseIP("0.0.0.0")
 	blockIPv6 = net.ParseIP("0:0:0:0:0:0:0:0")
 	blockTTL  = uint32(60)
 )
 
-func handler(rw dns.ResponseWriter, req *dns.Msg) {
+func Handler(rw dns.ResponseWriter, req *dns.Msg) {
 	defer rw.Close()
 
-	if isBlacklisted(req) {
-		if err := block(rw, req); err != nil {
-			log.Println(fmt.Errorf("Failed to block request: %w", err))
+	if IsBlacklisted(req) {
+		if err := Block(rw, req); err != nil {
+			log.Println(fmt.Errorf("failed to block request: %w", err))
 		}
 
 		return
 	}
-
-	resp, _, err := client.Exchange(req, upstream)
+	c := alter.ParseFlags()
+	resp, _, err := client.Exchange(req, c.Upstream)
 	if err != nil {
-		log.Fatalln(fmt.Errorf("Failed to exchange: %w", err))
+		log.Fatalln(fmt.Errorf("failed to exchange: %w", err))
 		return
 	}
 
 	if err = rw.WriteMsg(resp); err != nil {
-		log.Println(fmt.Errorf("Failed to reply: %w", err))
+		log.Println(fmt.Errorf("failed to reply: %w", err))
 	}
 }
 
-func block(rw dns.ResponseWriter, req *dns.Msg) error {
+func Block(rw dns.ResponseWriter, req *dns.Msg) error {
 	resp := &dns.Msg{}
 	resp.SetReply(req)
 
