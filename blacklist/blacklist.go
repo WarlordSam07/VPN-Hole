@@ -56,7 +56,7 @@ func (b *Blacklist) Watch(ctx context.Context, interval time.Duration) {
 
 				hosts, err := b.updateList(ctx, blacklistURL, sum)
 				if err != nil {
-					log.Println(fmt.Errorf("Failed to update subscription (%s): %w", blacklistURL, err))
+					log.Println(fmt.Errorf("failed to update subscription (%s): %w", blacklistURL, err))
 					return
 				}
 
@@ -98,7 +98,7 @@ func (b *Blacklist) fetch(ctx context.Context, blacklistURL string) ([]string, s
 
 	if resp.StatusCode != http.StatusOK {
 		io.Copy(ioutil.Discard, resp.Body)
-		return nil, "", fmt.Errorf("Unexpected response status code: %d", resp.StatusCode)
+		return nil, "", fmt.Errorf("unexpected response status code: %d", resp.StatusCode)
 	}
 
 	var (
@@ -125,7 +125,7 @@ func (b *Blacklist) fetch(ctx context.Context, blacklistURL string) ([]string, s
 
 	if err = scanner.Err(); err != nil {
 		io.Copy(ioutil.Discard, resp.Body)
-		return nil, "", fmt.Errorf("Failed to scan response body: %w", err)
+		return nil, "", fmt.Errorf("failed to scan response body: %w", err)
 	}
 
 	return hosts, hex.EncodeToString(hasher.Sum(nil)), nil
