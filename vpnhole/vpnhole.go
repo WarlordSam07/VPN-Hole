@@ -1,4 +1,4 @@
-package alter
+package vpnhole
 
 import (
 	"fmt"

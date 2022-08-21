@@ -69,15 +69,15 @@ go mod tidy
 If go.mod and go.sum are missing from the cloned repository, then:
 ```
 # go mod init [module-path]
-go mod init 0xacab.org/leap/vpn-hole/alter
+go mod init 0xacab.org/leap/vpn-hole/vpnhole
 ``` 
 
 ## Build & Run <a name="Build & Run"></a>
 To build the library and use it as a standalone:
 ```
-# navigate to app/alter
+# navigate to app/vpnhole
 
-cd app/alter
+cd app/vpnhole
 
 # build the library
 
@@ -112,10 +112,10 @@ sudo systemctl disable systemd-resolved
 To disable it permanently, uncomment and change `DNSStubListener` to *no* in `/etc/systemd/resolved.conf`; you can revert back everything to default if you stop using the vpn-hole library as a standalone.
 Also stop any other service which prevents from listening on port 53. Then, you can simply execute the binary file.
 
-In **Windows**, an executable named- alter.exe would be created. 
+In **Windows**, an executable named- vpnhole.exe would be created. 
 ```
 # executing the binary
-alter.exe
+vpnhole.exe
 ```
 This would start the network wide DNS-level blocker on port 53.
 
@@ -141,14 +141,14 @@ To integrate the VPN-Hole Library with existing cross-platform applications, we 
 ```
 # For binding with Android Platforms:
 
-cd vpn-hole/alter
+cd vpn-hole/vpnhole
 
 # use gomobile to generate .aar:
 
 gomobile bind -target='android' -o path/for/the/output/filename.aar -v path/for/vpnhole.go
 
 For example: 
-# Here pwd is path/vpn-hole/alter
+# Here pwd is path/vpn-hole/vpnhole
 
 gomobile bind -target='android' -o vpn-hole.aar -v
 

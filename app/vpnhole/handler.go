@@ -5,7 +5,7 @@ import (
 	"log"
 	"net"
 
-	"0xacab.org/leap/vpn-hole/alter/alter"
+	"0xacab.org/leap/vpn-hole/vpnhole/vpnhole"
 	"github.com/miekg/dns"
 )
 
