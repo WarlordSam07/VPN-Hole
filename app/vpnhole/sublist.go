@@ -6,7 +6,7 @@ import (
 	"os"
 )
 
-func readSubscriptions(filename string) ([]string, error) {
+func ReadSubscriptions(filename string) ([]string, error) {
 	f, err := os.Open(filename)
 	if err != nil {
 		return nil, fmt.Errorf("failed to open: %w", err)

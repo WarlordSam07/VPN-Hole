@@ -1,14 +1,18 @@
 package main
 
 import (
+	"net/http"
 	"strings"
-	"main/blacklist"
+	"time"
+
+	"0xacab.org/leap/vpn-hole/blacklist"
 	"github.com/miekg/dns"
 )
 
-var privBlacklist = blacklist.New(httpClient)
+var httpClient = &http.Client{Timeout: 30 * time.Second}
+var PrivBlacklist = blacklist.New(httpClient)
 
-func isBlacklisted(req *dns.Msg) bool {
+func IsBlacklisted(req *dns.Msg) bool {
 	if req.Opcode != dns.OpcodeQuery {
 		return false
 	}
@@ -26,5 +30,5 @@ func isBlacklisted(req *dns.Msg) bool {
 		return false
 	}
 
-	return privBlacklist.Contains(strings.TrimRight(q.Name, "."))
+	return PrivBlacklist.Contains(strings.TrimRight(q.Name, "."))
 }
