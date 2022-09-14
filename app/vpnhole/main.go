@@ -13,14 +13,14 @@ import (
 
 func init() {
 	// start the cmdline parser
-	alter.ParseFlags()
+	vpnhole.ParseFlags()
 
 }
 
 func main() {
 
 	// call ParseFlags() to get the config struct with the values
-	c := alter.ParseFlags()
+	c := vpnhole.ParseFlags()
 	fmt.Println(c)
 
 	// start the vpnhole

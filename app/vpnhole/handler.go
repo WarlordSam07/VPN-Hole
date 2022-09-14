@@ -27,7 +27,7 @@ func Handler(rw dns.ResponseWriter, req *dns.Msg) {
 
 		return
 	}
-	c := alter.ParseFlags()
+	c := vpnhole.ParseFlags()
 	resp, _, err := client.Exchange(req, c.Upstream)
 	if err != nil {
 		log.Fatalln(fmt.Errorf("failed to exchange: %w", err))
