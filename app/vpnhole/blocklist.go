@@ -5,7 +5,7 @@ import (
 	"strings"
 	"time"
 
-	"0xacab.org/leap/vpn-hole/blacklist"
+	"0xacab.org/leap/vpn-hole/vpnhole/blacklist"
 	"github.com/miekg/dns"
 )
 
