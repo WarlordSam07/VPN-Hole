@@ -18,27 +18,38 @@ type VpnHoleClient struct {
 	Eventlogger           EventLogger
 }
 
-type EventLogger interface {
-	Infof(format string, v ...interface{})
-	Errorf(format string, v ...interface{})
+func (c *VpnHoleClient) String() string {
+	return fmt.Sprintf("vpnhole client: addr=%s, upstream=%s, subscriptions=%s", c.Addr, c.Upstream, c.SubscriptionsFilename)
 }
 
+// EventLogger is an interface for logging events.
+type EventLogger interface {
+	Info(msg string)
+	Error(msg string)
+}
+
+// DefaultEventLogger is the default event logger.
 type DefaultEventLogger struct {
 	InfoLogger  *log.Logger
 	ErrorLogger *log.Logger
 }
 
-// Implement the EventLogger interface
-func (l *DefaultEventLogger) Infof(format string, v ...interface{}) {
-	l.InfoLogger.Printf(format, v...)
+// Info logs an info message.
+func (l *DefaultEventLogger) Info(msg string) {
+	l.InfoLogger.Println(msg)
 }
 
-func (l *DefaultEventLogger) Errorf(format string, v ...interface{}) {
-	l.ErrorLogger.Printf(format, v...)
+// Error logs an error message.
+func (l *DefaultEventLogger) Error(msg string) {
+	l.ErrorLogger.Println(msg)
 }
 
-func (c *VpnHoleClient) String() string {
-	return fmt.Sprintf("addr=%s, subscriptions=%s, upstream=%s", c.Addr, c.SubscriptionsFilename, c.Upstream)
+// NewDefaultEventLogger returns a new DefaultEventLogger.
+func NewDefaultEventLogger() *DefaultEventLogger {
+	return &DefaultEventLogger{
+		InfoLogger:  log.New(log.Writer(), "INFO: ", log.Flags()),
+		ErrorLogger: log.New(log.Writer(), "ERROR: ", log.Flags()),
+	}
 }
 
 // NewVpnHoleClient creates a new VpnHoleClient
@@ -74,7 +85,7 @@ func (c *VpnHoleClient) Start() error {
 		}
 	}
 
-	c.Eventlogger.Infof("vpnhole started: %s", c)
+	c.Eventlogger.Info("Starting VPN-Hole")
 
 	if c.IsRunning() {
 		return ErrAlreadyRunning
@@ -88,6 +99,8 @@ func (c *VpnHoleClient) Stop() error {
 	if !c.IsRunning() {
 		return ErrNotRunning
 	}
+
+	c.Eventlogger.Error("Stopping VPN-Hole")
 
 	return nil
 }

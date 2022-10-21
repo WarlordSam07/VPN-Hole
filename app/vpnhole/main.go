@@ -21,6 +21,7 @@ func main() {
 	// call Start() to get the config struct with the values
 	// and then call Stop() to stop the VpnHoleClient
 	c := vpnhole.NewVpnHoleClient("", "", "", nil)
+
 	err := c.Start()
 	if err != nil {
 		log.Fatal(err)

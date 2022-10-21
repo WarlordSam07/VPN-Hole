@@ -28,6 +28,7 @@ func Handler(rw dns.ResponseWriter, req *dns.Msg) {
 		return
 	}
 	c := vpnhole.NewVpnHoleClient("", "", "", nil)
+
 	err := c.Start()
 	if err != nil {
 		log.Fatal(err)
