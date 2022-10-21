@@ -5,22 +5,27 @@ import (
 	"fmt"
 	"log"
 
-	"0xacab.org/leap/vpn-hole/vpnhole/vpnhole"
-	"github.com/miekg/dns"
-
 	"time"
+
+	"0xacab.org/leap/vpn-hole/vpnhole/vpnhole"
+	"github.com/common-nighthawk/go-figure"
+	"github.com/miekg/dns"
 )
-
-func init() {
-	// start the cmdline parser
-	vpnhole.ParseFlags()
-
-}
 
 func main() {
 
-	// call ParseFlags() to get the config struct with the values
-	c := vpnhole.ParseFlags()
+	// Print the 'VPN-Hole' Logo
+	Logo := figure.NewColorFigure(" VPN-Hole", "", "green", true)
+	Logo.Print()
+
+	// call Start() to get the config struct with the values
+	// and then call Stop() to stop the VpnHoleClient
+	c := vpnhole.NewVpnHoleClient("", "", "", nil)
+	err := c.Start()
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer c.Stop()
 	fmt.Println(c)
 
 	// start the vpnhole

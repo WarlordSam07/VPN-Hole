@@ -27,7 +27,14 @@ func Handler(rw dns.ResponseWriter, req *dns.Msg) {
 
 		return
 	}
-	c := vpnhole.ParseFlags()
+	c := vpnhole.NewVpnHoleClient("", "", "", nil)
+	err := c.Start()
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer c.Stop()
+	fmt.Println(c)
+
 	resp, _, err := client.Exchange(req, c.Upstream)
 	if err != nil {
 		log.Fatalln(fmt.Errorf("failed to exchange: %w", err))
@@ -37,6 +44,7 @@ func Handler(rw dns.ResponseWriter, req *dns.Msg) {
 	if err = rw.WriteMsg(resp); err != nil {
 		log.Println(fmt.Errorf("failed to reply: %w", err))
 	}
+
 }
 
 func Block(rw dns.ResponseWriter, req *dns.Msg) error {
