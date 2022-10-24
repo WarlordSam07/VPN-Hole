@@ -1,11 +1,11 @@
-package main
+package vpnhole
 
 import (
 	"fmt"
 	"log"
 	"net"
 
-	"0xacab.org/leap/vpn-hole/vpnhole/vpnhole"
+	"0xacab.org/leap/vpn-hole/vpnhole"
 	"github.com/miekg/dns"
 )
 
