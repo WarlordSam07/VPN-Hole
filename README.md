@@ -1,5 +1,9 @@
 WIP
 
+<p align="center">
+  <img width="285" height="285" src="https://0xacab.org/warlordsam/assets/-/raw/no-masters/vpn-hole-mascot.png">
+</p>
+
 # **VPN-Hole** 
 
 A self-contained GoLang library that is capable of blocking ads,malwares and trackers using [DNS Sinkholing](https://en.wikipedia.org/wiki/DNS_sinkhole). This libray can be integrated with different pre-existing cross-platform applications.
