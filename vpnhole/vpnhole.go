@@ -1,9 +1,13 @@
 package vpnhole
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"log"
+	"time"
+
+	"github.com/miekg/dns"
 )
 
 var (
@@ -16,6 +20,7 @@ type VpnHoleClient struct {
 	SubscriptionsFilename string
 	Upstream              string
 	Eventlogger           EventLogger
+	server                *dns.Server
 }
 
 func (c *VpnHoleClient) String() string {
@@ -47,8 +52,8 @@ func (l *DefaultEventLogger) Error(msg string) {
 // NewDefaultEventLogger returns a new DefaultEventLogger.
 func NewDefaultEventLogger() *DefaultEventLogger {
 	return &DefaultEventLogger{
-		InfoLogger:  log.New(log.Writer(), "INFO: ", log.Flags()),
-		ErrorLogger: log.New(log.Writer(), "ERROR: ", log.Flags()),
+		InfoLogger:  log.New(log.Writer(), "\033[32m[+] ", log.Flags()),
+		ErrorLogger: log.New(log.Writer(), "\033[31m[-] ", log.Flags()),
 	}
 }
 
@@ -60,11 +65,23 @@ func NewVpnHoleClient(addr, subscriptionsFilename, upstream string, eventlogger 
 		SubscriptionsFilename: subscriptionsFilename,
 		Upstream:              upstream,
 		Eventlogger:           eventlogger,
+		server:                &dns.Server{},
 	}
 }
 
 // Start starts the VpnHoleClient and config new values
-func (c *VpnHoleClient) Start() error {
+func (c *VpnHoleClient) Start() (bool, error) {
+
+	defer func() {
+		log.Println("\033[31m[+] Stopping VPN-Hole\033[0m")
+	}()
+
+	if c.IsRunning() {
+		log.Println("[-] VPN-Hole is already running")
+		return false, ErrAlreadyRunning
+	}
+
+	log.Println("\033[32m[+] Starting VPN-Hole\033[0m")
 
 	if c.Addr == "" {
 		c.Addr = ":53"
@@ -79,33 +96,58 @@ func (c *VpnHoleClient) Start() error {
 	}
 
 	if c.Eventlogger == nil {
-		c.Eventlogger = &DefaultEventLogger{
-			InfoLogger:  log.New(log.Writer(), "INFO: ", log.Flags()),
-			ErrorLogger: log.New(log.Writer(), "ERROR: ", log.Flags()),
-		}
+		c.Eventlogger = NewDefaultEventLogger()
 	}
 
-	c.Eventlogger.Info("Starting VPN-Hole")
+	c.server = &dns.Server{Addr: c.Addr}
 
-	if c.IsRunning() {
-		return ErrAlreadyRunning
+	subscriptions, err := ReadSubscriptions(c.SubscriptionsFilename)
+	if err != nil {
+		log.Fatalln(fmt.Errorf("failed to read subscriptions list: %w", err))
+
+		return false, err
 	}
 
-	return nil
+	for _, blacklistURL := range subscriptions {
+		PrivBlacklist.Subscribe(blacklistURL)
+	}
+
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	go PrivBlacklist.Watch(ctx, time.Minute*10)
+
+	dns.HandleFunc(".", Handler)
+
+	if err = dns.ListenAndServe(c.Addr, "udp", nil); err != nil {
+		log.Println(fmt.Errorf("failed to serve DNS server: %w", err))
+
+		c.Addr = ""
+		return false, err
+	}
+
+	return true, nil
 }
 
 // Stop stops the VpnHoleClient
-func (c *VpnHoleClient) Stop() error {
+func (c *VpnHoleClient) Stop() (bool, error) {
+
 	if !c.IsRunning() {
-		return ErrNotRunning
+		return false, ErrNotRunning
 	}
 
-	c.Eventlogger.Error("Stopping VPN-Hole")
+	if err := c.server.Shutdown(); err != nil {
+		log.Fatalln(fmt.Errorf("failed to shutdown DNS server: %w", err))
+		return false, err
+	}
 
-	return nil
+	c.server = nil
+	c.Addr = ""
+
+	return true, nil
 }
 
-// IsRunning returns true if the VpnHoleClient is running
+// IsRunning returns true if the VpnHoleClient is running.
 func (c *VpnHoleClient) IsRunning() bool {
-	return false
+	return c.Addr != "" && c.server != nil
 }
